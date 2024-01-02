@@ -9,7 +9,7 @@ const inputDocument = document.getElementById('input-documento')
 function setLinkDocument(nameDocument, id) {
   listDocuments.innerHTML += `
         <a 
-            href="document.html?id=${id}&nome=${nameDocument}"
+            href="./pages/document.html?id=${id}&nome=${nameDocument}"
             id="${id}"
             class="list-group-item list-group-item-action"
         >

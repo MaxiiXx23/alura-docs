@@ -10,6 +10,10 @@ export class DocumentUseCase {
     return await this.documentService.getListDocuments()
   }
 
+  async getDocumentByName(nameDocument: string) {
+    return await this.documentService.getDocument(nameDocument)
+  }
+
   async createDocument(nameDocument: string) {
     return await this.documentService.createDocument(nameDocument)
   }
