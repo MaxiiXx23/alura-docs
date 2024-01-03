@@ -1,10 +1,14 @@
 import { getListDocument, createDocument } from './getListDocuments.js'
+import { getCookie, removeCookie } from '../utils/cookies.js'
 
 const socket = io()
+
+console.log(getCookie('token'))
 
 const listDocuments = document.getElementById('lista-documentos')
 const formDocument = document.getElementById('form-adiciona-documento')
 const inputDocument = document.getElementById('input-documento')
+const btnLogout = document.getElementById('botao-logout')
 
 function setLinkDocument(nameDocument, id) {
   listDocuments.innerHTML += `
@@ -37,6 +41,11 @@ formDocument.addEventListener('submit', async (event) => {
   if (!inputDocument.value) return
   await createDocument(inputDocument.value)
   inputDocument.value = ''
+})
+
+btnLogout.addEventListener('click', () => {
+  removeCookie('token')
+  window.location.href = '/pages/login.html'
 })
 
 generateListDocuments()

@@ -12,6 +12,7 @@ const port = process.env.PORT || 3000
 const currentPath = url.fileURLToPath(import.meta.url)
 const publicDir = path.join(currentPath, '../..', 'public')
 
+app.use(express.json())
 app.use(express.static(publicDir))
 app.use(routersApi)
 

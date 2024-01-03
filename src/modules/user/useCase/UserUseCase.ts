@@ -10,4 +10,8 @@ export class UserUseCase {
   async registerUser({ name, password }: IUserRegister) {
     return await this.userService.registerUser({ name, password })
   }
+
+  async authenticate({ name, password }: IUserRegister) {
+    return await this.userService.authenticateUser({ name, password })
+  }
 }
