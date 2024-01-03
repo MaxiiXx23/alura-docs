@@ -19,8 +19,6 @@ nspUser.on('connection', (socket) => {
 
   documentEvents.getDocumentEvent(socket, nspUser)
   documentEvents.insertDocumentEvent(socket, nspUser)
-  documentEvents.patchDocumentTextEvent(socket)
-  documentEvents.userTypingEvent(socket)
   documentEvents.deleteDocumentEvent(socket, nspUser)
 })
 

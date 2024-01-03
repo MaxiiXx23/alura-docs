@@ -30,10 +30,15 @@ function emitTextEditor(data) {
 
 function emitTyping(nameDocument) {
   clearTimeout(typingTimer)
-  socket.emit('userTyping', nameDocument)
+  const userName = localStorage.getItem('userName')
+  socket.emit('userTyping', { nameDocument, userName })
   typingTimer = setTimeout(() => {
     socket.emit('stopUserTyping', nameDocument)
   }, typingTimeout)
+}
+
+function emitUserDisconnectDocument(payload) {
+  socket.emit('userDisconnectDocument', payload)
 }
 
 /* 
@@ -45,8 +50,7 @@ function emitTyping(nameDocument) {
 
 */
 
-socket.on('connect_error', (error) => {
-  console.log(error)
+socket.on('connect_error', () => {
   window.location.href = '/pages/login.html'
 })
 
@@ -58,8 +62,8 @@ socket.on('textEditorClients', (data) => {
   putTextEditor(data)
 })
 
-socket.on('userTyping', (idSocket) => {
-  const text = `Usuário: ${idSocket} está digitando...`
+socket.on('userTyping', (userName) => {
+  const text = `${userName} está digitando...`
   setUserTyping(text)
 })
 
@@ -67,4 +71,14 @@ socket.on('stopUserTyping', () => {
   setUserTyping('')
 })
 
-export { emitTextEditor, selectDocument, emitTyping }
+socket.on('userAlreadyConnected', () => {
+  alert('Another tab open on the same document.')
+  window.location.href = '/'
+})
+
+export {
+  emitTextEditor,
+  selectDocument,
+  emitTyping,
+  emitUserDisconnectDocument,
+}

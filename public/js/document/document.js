@@ -4,6 +4,7 @@ import {
   emitTextEditor,
   emitTyping,
   selectDocument,
+  emitUserDisconnectDocument,
 } from './socket-front-document.js'
 
 const params = new URLSearchParams(window.location.search)
@@ -15,10 +16,12 @@ const titleDocument = document.getElementById('titulo-documento')
 const btnDeleteDocument = document.getElementById('excluir-documento')
 const userTyping = document.getElementById('usuario-digitando')
 const listUsersOnline = document.getElementById('usuarios-conectados')
+const btnBack = document.getElementById('botao-voltar')
 
 titleDocument.textContent = nameDocument || 'Documento sem título'
 
 function tryConnectionSuccess(payloadToken) {
+  localStorage.setItem('userName', `${payloadToken.name}`)
   selectDocument({ nameDocument, userName: payloadToken.name })
 }
 
@@ -42,6 +45,12 @@ inputTextarea.addEventListener('keyup', (event) => {
   } else {
     emitTyping(nameDocument)
   }
+})
+
+btnBack.addEventListener('click', () => {
+  const userName = localStorage.getItem('userName')
+
+  emitUserDisconnectDocument({ nameDocument, userName })
 })
 
 function deleteDocument(id) {
