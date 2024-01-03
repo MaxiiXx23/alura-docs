@@ -1,9 +1,11 @@
 import { getListDocument, createDocument } from './getListDocuments.js'
 import { getCookie, removeCookie } from '../utils/cookies.js'
 
-const socket = io()
-
-console.log(getCookie('token'))
+const socket = io({
+  auth: {
+    token: getCookie('token'),
+  },
+})
 
 const listDocuments = document.getElementById('lista-documentos')
 const formDocument = document.getElementById('form-adiciona-documento')
@@ -39,7 +41,7 @@ async function generateListDocuments() {
 formDocument.addEventListener('submit', async (event) => {
   event.preventDefault()
   if (!inputDocument.value) return
-  await createDocument(inputDocument.value)
+  await createDocument(socket, inputDocument.value)
   inputDocument.value = ''
 })
 
@@ -49,6 +51,11 @@ btnLogout.addEventListener('click', () => {
 })
 
 generateListDocuments()
+
+socket.on('connect_error', (error) => {
+  console.log(error)
+  // window.location.href = '/pages/login.html'
+})
 
 socket.on('insertDocument', (document) => {
   setLinkDocument(document.name, document.id)

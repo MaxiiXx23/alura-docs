@@ -1,10 +1,15 @@
+import { getCookie } from '../../utils/cookies.js'
 import {
   emitTextEditor,
   emitTyping,
   selectDocument,
 } from './socket-front-document.js'
 
-const socket = io()
+const socket = io({
+  auth: {
+    token: getCookie('token'),
+  },
+})
 
 const params = new URLSearchParams(window.location.search)
 const nameDocument = params.get('nome')

@@ -1,9 +1,14 @@
 // Se o frontend estiver em outra 'url', devemos informa-la à função 'io'
 // const socket = io("http://localhost:3000");
 
+import { getCookie } from '../../utils/cookies.js'
 import { putTextEditor, setUserTyping } from './document.js'
 
-const socket = io()
+const socket = io({
+  auth: {
+    token: getCookie('token'),
+  },
+})
 
 let typingTimer
 const typingTimeout = 1000 // Tempo em milissegundos para determinar que o usuário parou de digitar
@@ -40,6 +45,11 @@ function emitTyping(nameDocument) {
 })
 
 */
+
+socket.on('connect_error', (error) => {
+  console.log(error)
+  window.location.href = '/pages/login.html'
+})
 
 socket.on('textEditorClients', (data) => {
   putTextEditor(data)

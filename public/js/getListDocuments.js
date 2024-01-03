@@ -1,5 +1,4 @@
 const baseUrl = 'http://localhost:3000'
-const socket = io()
 
 async function getListDocument() {
   const list = await axios.get(`${baseUrl}/documents/list`)
@@ -7,7 +6,7 @@ async function getListDocument() {
   return list.data.data
 }
 
-async function createDocument(nameDocument) {
+async function createDocument(socket, nameDocument) {
   let document
 
   socket.emit('insertDocument', nameDocument)
