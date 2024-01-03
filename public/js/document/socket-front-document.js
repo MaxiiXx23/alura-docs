@@ -1,22 +1,21 @@
 // Se o frontend estiver em outra 'url', devemos informa-la à função 'io'
 // const socket = io("http://localhost:3000");
 
-import { getCookie } from '../../utils/cookies.js'
-import { putTextEditor, setUserTyping } from './document.js'
-
-const socket = io('/users', {
-  auth: {
-    token: getCookie('token'),
-  },
-})
+import { socket } from '../connectionSocket.js'
+import {
+  putTextEditor,
+  setUserTyping,
+  tryConnectionSuccess,
+  changeInterfaceUsersOnline,
+} from './document.js'
 
 let typingTimer
 const typingTimeout = 1000 // Tempo em milissegundos para determinar que o usuário parou de digitar
 
 // Aqui emito um evento enviado o nome do document selecionado pelo usuário, afim de separar o envio de mensagens(eventos) por documento.
-function selectDocument(nome) {
+function selectDocument(payload) {
   // 2°forma: Recuperação dados devolvidos pelo servidor, através de uma callback(cb) dentro do evento
-  socket.emit('selectDocument', nome, (data) => {
+  socket.emit('selectDocument', payload, (data) => {
     putTextEditor(data)
   })
 }
@@ -50,6 +49,10 @@ socket.on('connect_error', (error) => {
   console.log(error)
   window.location.href = '/pages/login.html'
 })
+
+socket.on('connectionSucess', tryConnectionSuccess)
+
+socket.on('usersConnected', changeInterfaceUsersOnline)
 
 socket.on('textEditorClients', (data) => {
   putTextEditor(data)

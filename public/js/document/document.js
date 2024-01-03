@@ -1,15 +1,10 @@
-import { getCookie } from '../../utils/cookies.js'
+import { socket } from '../connectionSocket.js'
+
 import {
   emitTextEditor,
   emitTyping,
   selectDocument,
 } from './socket-front-document.js'
-
-const socket = io('/users', {
-  auth: {
-    token: getCookie('token'),
-  },
-})
 
 const params = new URLSearchParams(window.location.search)
 const nameDocument = params.get('nome')
@@ -19,10 +14,23 @@ const inputTextarea = document.getElementById('editor-texto')
 const titleDocument = document.getElementById('titulo-documento')
 const btnDeleteDocument = document.getElementById('excluir-documento')
 const userTyping = document.getElementById('usuario-digitando')
+const listUsersOnline = document.getElementById('usuarios-conectados')
 
 titleDocument.textContent = nameDocument || 'Documento sem título'
 
-selectDocument(nameDocument)
+function tryConnectionSuccess(payloadToken) {
+  selectDocument({ nameDocument, userName: payloadToken.name })
+}
+
+function changeInterfaceUsersOnline(usersConnected) {
+  listUsersOnline.innerHTML = ''
+
+  usersConnected.forEach((user) => {
+    listUsersOnline.innerHTML += `
+      <li class="list-group-item">${user}</li>
+    `
+  })
+}
 
 inputTextarea.addEventListener('keyup', (event) => {
   if (event.key === 'Enter') {
@@ -58,4 +66,9 @@ socket.on('deleteDocument', async (id) => {
   }
 })
 
-export { putTextEditor, setUserTyping }
+export {
+  putTextEditor,
+  setUserTyping,
+  tryConnectionSuccess,
+  changeInterfaceUsersOnline,
+}

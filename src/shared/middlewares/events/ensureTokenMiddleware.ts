@@ -10,7 +10,9 @@ export function ensureTokenMiddleware(
   try {
     const token = socket.handshake.auth.token
 
-    jwt.verify(token, process.env.TOKEN_SECRET as string)
+    const tokenVerified = jwt.verify(token, process.env.TOKEN_SECRET as string)
+    socket.emit('connectionSucess', tokenVerified)
+    next()
   } catch (error) {
     next(error as Error)
   }

@@ -2,8 +2,17 @@ import { Socket, Namespace } from 'socket.io'
 
 import { DocumentUseCase } from '@/modules/Documents/useCases/DocumentUseCase'
 import { IOnTextEditorProps } from '@/interfaces/document'
+import {
+  addConnectionDocument,
+  getConnectionsByDocument,
+} from '@/utils/connectionsDocument'
 
 // Classe responsável por abrigar a refatoração dos eventos do websocket
+
+interface IPayloadGetDocument {
+  nameDocument: string
+  userName: string
+}
 
 export class DocumentEvents {
   private documentUseCase: DocumentUseCase
@@ -53,25 +62,34 @@ export class DocumentEvents {
     })
   }
 
-  async getDocumentEvent(socket: Socket) {
-    socket.on('selectDocument', async (nameDocument, cbReturnText) => {
-      // o método 'join' serve para agruparmos clientes conectados a uma 'sala'
-      socket.join(nameDocument)
+  async getDocumentEvent(socket: Socket, io: Namespace) {
+    socket.on(
+      'selectDocument',
+      async ({ nameDocument, userName }: IPayloadGetDocument, cbReturnText) => {
+        // o método 'join' serve para agruparmos clientes conectados a uma 'sala'
 
-      const document =
-        await this.documentUseCase.getDocumentByName(nameDocument)
+        const document =
+          await this.documentUseCase.getDocumentByName(nameDocument)
 
-      if (document) {
-        /*
+        if (document) {
+          socket.join(nameDocument)
+
+          addConnectionDocument({ nameDocument, userName })
+
+          const usersConnectedOnDocument =
+            getConnectionsByDocument(nameDocument)
+          /*
           // 1° forma de emitir dados, assim que logados/conectamos na aplicação/servidor
           socket.emit('foundTextDocument', document.text)
         */
 
-        // 2° forma é retornar uma callback que retornará dados ao cliente ao escutar o evento
-        // Recurso: Acknowledgment de websockets
-        return cbReturnText(document.text)
-      }
-    })
+          // 2° forma é retornar uma callback que retornará dados ao cliente ao escutar o evento
+          // Recurso: Acknowledgment de websockets
+          io.to(nameDocument).emit('usersConnected', usersConnectedOnDocument)
+          return cbReturnText(document.text)
+        }
+      },
+    )
   }
 
   async userTypingEvent(socket: Socket) {

@@ -1,12 +1,8 @@
 import { getListDocument, createDocument } from './getListDocuments.js'
-import { getCookie, removeCookie } from '../utils/cookies.js'
+import { removeCookie } from '../utils/cookies.js'
+import { socket } from './connectionSocket.js'
 
 // Agora estou me conectando ao NAMESPACE(endopoint) /users
-const socket = io('/users', {
-  auth: {
-    token: getCookie('token'),
-  },
-})
 
 const listDocuments = document.getElementById('lista-documentos')
 const formDocument = document.getElementById('form-adiciona-documento')
