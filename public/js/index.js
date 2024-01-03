@@ -1,7 +1,8 @@
 import { getListDocument, createDocument } from './getListDocuments.js'
 import { getCookie, removeCookie } from '../utils/cookies.js'
 
-const socket = io({
+// Agora estou me conectando ao NAMESPACE(endopoint) /users
+const socket = io('/users', {
   auth: {
     token: getCookie('token'),
   },

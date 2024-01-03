@@ -4,7 +4,7 @@
 import { getCookie } from '../../utils/cookies.js'
 import { putTextEditor, setUserTyping } from './document.js'
 
-const socket = io({
+const socket = io('/users', {
   auth: {
     token: getCookie('token'),
   },

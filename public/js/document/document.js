@@ -5,7 +5,7 @@ import {
   selectDocument,
 } from './socket-front-document.js'
 
-const socket = io({
+const socket = io('/users', {
   auth: {
     token: getCookie('token'),
   },

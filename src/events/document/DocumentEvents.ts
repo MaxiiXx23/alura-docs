@@ -1,4 +1,4 @@
-import { Socket, Server } from 'socket.io'
+import { Socket, Namespace } from 'socket.io'
 
 import { DocumentUseCase } from '@/modules/Documents/useCases/DocumentUseCase'
 import { IOnTextEditorProps } from '@/interfaces/document'
@@ -12,7 +12,9 @@ export class DocumentEvents {
     this.documentUseCase = new DocumentUseCase()
   }
 
-  async insertDocumentEvent(socket: Socket, io: Server) {
+  // Agora "io" recebe o type "Namespace" pois, agora o caminho é informado pelo namespace  e não pelo server (namespace padrão "/")
+
+  async insertDocumentEvent(socket: Socket, io: Namespace) {
     // Aqui estou "escutando" o evento emitido pelo cliente, quando o mesmo está conectado.
 
     socket.on('insertDocument', async (nameDocument) => {
@@ -44,7 +46,7 @@ export class DocumentEvents {
     )
   }
 
-  async deleteDocumentEvent(socket: Socket, io: Server) {
+  async deleteDocumentEvent(socket: Socket, io: Namespace) {
     socket.on('deleteDocument', async (id) => {
       await this.documentUseCase.deleteDocument(id)
       io.emit('deleteDocument', id)
